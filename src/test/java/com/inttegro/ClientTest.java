@@ -319,7 +319,6 @@ class ClientTest {
     @Test
     void purchaseIntentExposesNestedResponseTypes() throws Exception {
         String json = "{" +
-                "\"activity\":{\"recent\":[{\"created_at\":\"2026-09-09T12:01:00Z\",\"id\":\"saleevt_123\",\"purchase_intent_id\":\"sale_123\",\"type\":\"viewed\",\"visitor\":{\"ip_address\":\"203.0.113.7\"}}]}," +
                 "\"allow_variants\":false,\"created_at\":\"2026-09-09T12:00:00Z\",\"id\":\"sale_123\"," +
                 "\"merchant\":{\"organization_name\":\"Tea House Ltd\"}," +
                 "\"product\":{\"active\":true,\"created_at\":\"2026-09-09T11:00:00Z\",\"dimensions\":{\"digital\":{\"bytes\":1024}},\"id\":\"prod_123\",\"name\":\"Tea guide\",\"type\":\"digital\"}," +
@@ -328,12 +327,10 @@ class ClientTest {
 
         PurchaseIntent intent = mapper().readValue(json, PurchaseIntent.class);
 
-        assertEquals("203.0.113.7", intent.activity.recent.get(0).visitor.ipAddress);
         assertEquals("Tea House Ltd", intent.merchant.organizationName);
         assertEquals(1024.0, intent.product.dimensions.digital.bytes);
         assertEquals("or_123", intent.usage.order.id);
         assertEquals(PurchaseIntentStatus.ACTIVE, intent.status);
-        assertEquals(PurchaseIntentActivityType.VIEWED, intent.activity.recent.get(0).type);
     }
 
     @Test

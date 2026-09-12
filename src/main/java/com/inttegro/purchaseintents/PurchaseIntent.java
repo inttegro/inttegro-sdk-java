@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PurchaseIntent {
-    public PurchaseIntentActivityLog activity;
     @JsonProperty("allow_variants")
     public boolean allowVariants;
     @JsonProperty("created_at")
