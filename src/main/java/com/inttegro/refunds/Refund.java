@@ -24,6 +24,7 @@ public class Refund {
     @JsonProperty("created_at") public OffsetDateTime createdAt;
     @JsonProperty("processing_at") public OffsetDateTime processingAt;
     @JsonProperty("succeeded_at") public OffsetDateTime succeededAt;
+    public RefundFailure failure;
     @JsonProperty("failed_at") public OffsetDateTime failedAt;
     @JsonProperty("canceled_at") public OffsetDateTime canceledAt;
     @JsonProperty("cancel_reason") public String cancelReason;

@@ -8,6 +8,7 @@ import com.inttegro.otp.OtpTransmissionStatus;
 import com.inttegro.otp.OtpVerification;
 import com.inttegro.otp.OtpVerificationVerdict;
 import com.inttegro.products.ProductType;
+import com.inttegro.refunds.RefundFailureReason;
 import com.inttegro.refunds.RefundReason;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,7 @@ class DomainEnumsTest {
     void serializesDomainEnumsToTheirWireValues() throws Exception {
         assertEquals("\"digital\"", mapper.writeValueAsString(ProductType.DIGITAL));
         assertEquals("\"requested_by_customer\"", mapper.writeValueAsString(RefundReason.REQUESTED_BY_CUSTOMER));
+        assertEquals("\"refund_declined\"", mapper.writeValueAsString(RefundFailureReason.REFUND_DECLINED));
         assertEquals("\"pending\"", mapper.writeValueAsString(UploadRequestStatus.PENDING));
     }
 
@@ -27,6 +29,7 @@ class DomainEnumsTest {
     void deserializesWireValuesToDomainEnums() throws Exception {
         assertEquals(ProductType.DIGITAL, mapper.readValue("\"digital\"", ProductType.class));
         assertEquals(RefundReason.REQUESTED_BY_CUSTOMER, mapper.readValue("\"requested_by_customer\"", RefundReason.class));
+        assertEquals(RefundFailureReason.UNKNOWN, mapper.readValue("\"unknown\"", RefundFailureReason.class));
         assertEquals(UploadRequestStatus.PENDING, mapper.readValue("\"pending\"", UploadRequestStatus.class));
     }
 
