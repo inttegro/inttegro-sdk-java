@@ -400,6 +400,27 @@ class ClientTest {
     }
 
     @Test
+    void payoutsDecodeCanonicalTypedFields() throws Exception {
+        ObjectMapper mapper = mapper();
+        var payout = mapper.readValue(
+                "{\"id\":\"po_123\",\"destination_id\":\"fa_ghs\",\"execute_after\":\"2026-09-14T09:00:00Z\",\"initiated_at\":\"2026-09-14T08:55:00Z\",\"max_amount\":{\"currency\":\"ghs\",\"value\":12500},\"status\":\"invalid\",\"balance_transactions\":[\"bt_123\"],\"custom_data\":{\"batch\":\"weekly\"},\"error\":{\"cause\":\"provider unavailable\",\"message\":\"Payout failed\",\"occurred_at\":\"2026-09-14T09:05:00Z\",\"type\":\"network_error\"},\"failed_at\":\"2026-09-14T09:05:00Z\"}",
+                com.inttegro.payouts.Payout.class
+        );
+        assertEquals(List.of("bt_123"), payout.balanceTransactions);
+        assertEquals("weekly", payout.customData.get("batch"));
+        assertEquals("network_error", payout.error.type);
+        assertEquals(OffsetDateTime.parse("2026-09-14T09:05:00Z"), payout.failedAt);
+
+        var settings = mapper.readValue(
+                "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
+                com.inttegro.payouts.PayoutSettingsLookup.class
+        );
+        assertEquals("fa_ghs", settings.destinations.ghs);
+        assertEquals("168h", settings.schedule.agingSpec.tPlus);
+        assertEquals("{\"ghs\":\"fa_ghs\"}", mapper.writeValueAsString(com.inttegro.payouts.PayoutDestinations.ghs("fa_ghs")));
+    }
+
+    @Test
     void refundsSupportCanonicalLifecycle() throws Exception {
         ObjectMapper mapper = mapper();
         AtomicReference<String> canonicalBody = new AtomicReference<>();
