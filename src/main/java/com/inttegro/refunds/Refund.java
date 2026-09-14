@@ -14,6 +14,7 @@ public class Refund {
     public String id;
     @JsonProperty("order_id") public String orderId;
     @JsonProperty("order_amount") public Amount orderAmount;
+    public RefundSettlement settlement;
     public RefundStatus status;
     public Amount total;
     @JsonProperty("line_items") public List<RefundLineItem> lineItems;

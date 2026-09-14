@@ -424,7 +424,7 @@ class ClientTest {
     void refundsSupportCanonicalLifecycle() throws Exception {
         ObjectMapper mapper = mapper();
         AtomicReference<String> canonicalBody = new AtomicReference<>();
-        String refundBody = "{\"refund\":{\"id\":\"rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd\",\"order_id\":\"or_0123456789abcdefghijklmnopqrstuvwxyzABCD\",\"status\":\"pending\",\"total\":{\"currency\":\"ghs\",\"value\":2500},\"line_items\":[{\"id\":\"rli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"order_line_item_id\":\"oli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"original_amount_paid\":{\"currency\":\"ghs\",\"value\":5000},\"refund_amount\":{\"currency\":\"ghs\",\"value\":2500}}],\"reason\":\"item_returned\",\"created_at\":\"2026-09-02T10:00:00Z\"}}";
+        String refundBody = "{\"refund\":{\"id\":\"rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd\",\"order_id\":\"or_0123456789abcdefghijklmnopqrstuvwxyzABCD\",\"status\":\"pending\",\"settlement\":{\"type\":\"payment_method\",\"payment_method\":{\"id\":\"pm_123\",\"type\":\"mobile_money\",\"mobile_money\":{\"network\":\"mtn\",\"account_number\":\"****7831\",\"last4\":\"7831\"}}},\"total\":{\"currency\":\"ghs\",\"value\":2500},\"line_items\":[{\"id\":\"rli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"order_line_item_id\":\"oli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"original_amount_paid\":{\"currency\":\"ghs\",\"value\":5000},\"refund_amount\":{\"currency\":\"ghs\",\"value\":2500}}],\"reason\":\"item_returned\",\"created_at\":\"2026-09-02T10:00:00Z\"}}";
         server.createContext("/refunds/create", exchange -> captureJson(exchange, canonicalBody, refundBody));
         AtomicReference<String> cancelBody = new AtomicReference<>();
         server.createContext("/refunds/cancel", exchange -> captureJson(
@@ -461,6 +461,9 @@ class ClientTest {
 
         assertEquals("rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd", canonical.id);
         assertEquals(RefundStatus.PENDING, canonical.status);
+        RefundPaymentMethodSettlement settlement = assertInstanceOf(RefundPaymentMethodSettlement.class, canonical.settlement);
+        RefundSettlementMobileMoneyPaymentMethod method = assertInstanceOf(RefundSettlementMobileMoneyPaymentMethod.class, settlement.paymentMethod);
+        assertEquals("****7831", method.mobileMoney.accountNumber);
         assertEquals(2500L, canonical.total.value);
         assertEquals(RefundStatus.CANCELED, canceled.status);
         assertEquals("Customer no longer wants the refund", mapper.readTree(cancelBody.get()).get("reason").asText());
