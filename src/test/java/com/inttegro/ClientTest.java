@@ -405,7 +405,12 @@ class ClientTest {
         AtomicReference<String> canonicalBody = new AtomicReference<>();
         String refundBody = "{\"refund\":{\"id\":\"rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd\",\"order_id\":\"or_0123456789abcdefghijklmnopqrstuvwxyzABCD\",\"status\":\"pending\",\"total\":{\"currency\":\"ghs\",\"value\":2500},\"line_items\":[{\"id\":\"rli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"order_line_item_id\":\"oli_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN\",\"original_amount_paid\":{\"currency\":\"ghs\",\"value\":5000},\"refund_amount\":{\"currency\":\"ghs\",\"value\":2500}}],\"reason\":\"item_returned\",\"created_at\":\"2026-09-02T10:00:00Z\"}}";
         server.createContext("/refunds/create", exchange -> captureJson(exchange, canonicalBody, refundBody));
-        server.createContext("/refunds/cancel", new JsonHandler(200, refundBody.replace("\"pending\"", "\"canceled\"")));
+        AtomicReference<String> cancelBody = new AtomicReference<>();
+        server.createContext("/refunds/cancel", exchange -> captureJson(
+                exchange,
+                cancelBody,
+                refundBody.replace("\"pending\"", "\"canceled\"")
+        ));
         server.createContext("/refunds/lookup", new JsonHandler(200, refundBody));
         server.createContext("/refunds/page", new JsonHandler(200, "{\"page\":{\"number\":1,\"refunds\":[],\"size\":0}}"));
         server.start();
@@ -426,7 +431,10 @@ class ClientTest {
                 .build();
 
         Refund canonical = client.refunds().create(params);
-        Refund canceled = client.refunds().cancel("rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd");
+        Refund canceled = client.refunds().cancel(CancelRefundParams.builder()
+                .refundId("rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd")
+                .reason("Customer no longer wants the refund")
+                .build());
         Refund lookedUp = client.refunds().lookup("rf_1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcd");
         RefundPage page = client.refunds().page(RefundPageParams.builder().pageNumber(1).build());
 
@@ -434,6 +442,7 @@ class ClientTest {
         assertEquals(RefundStatus.PENDING, canonical.status);
         assertEquals(2500L, canonical.total.value);
         assertEquals(RefundStatus.CANCELED, canceled.status);
+        assertEquals("Customer no longer wants the refund", mapper.readTree(cancelBody.get()).get("reason").asText());
         assertEquals(canonical.id, lookedUp.id);
         assertEquals(0, page.size);
         assertEquals("item_returned", mapper.readTree(canonicalBody.get()).get("reason").asText());

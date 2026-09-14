@@ -13,6 +13,7 @@ import java.util.Map;
 public class Refund {
     public String id;
     @JsonProperty("order_id") public String orderId;
+    @JsonProperty("order_amount") public Amount orderAmount;
     public RefundStatus status;
     public Amount total;
     @JsonProperty("line_items") public List<RefundLineItem> lineItems;
@@ -25,4 +26,5 @@ public class Refund {
     @JsonProperty("succeeded_at") public OffsetDateTime succeededAt;
     @JsonProperty("failed_at") public OffsetDateTime failedAt;
     @JsonProperty("canceled_at") public OffsetDateTime canceledAt;
+    @JsonProperty("cancel_reason") public String cancelReason;
 }

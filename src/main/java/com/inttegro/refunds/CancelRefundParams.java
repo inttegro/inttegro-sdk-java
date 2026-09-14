@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class CancelRefundParams {
     @JsonProperty("refund_id") public String refundId;
+    public String reason;
     @JsonProperty("request_meta") public RequestMeta requestMeta;
 
     public static Builder builder() { return new Builder(); }
@@ -17,6 +18,7 @@ public class CancelRefundParams {
     public static class Builder {
         private final CancelRefundParams params = new CancelRefundParams();
         public Builder refundId(String refundId) { params.refundId = refundId; return this; }
+        public Builder reason(String reason) { params.reason = reason; return this; }
         public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public CancelRefundParams build() { return params; }
     }
