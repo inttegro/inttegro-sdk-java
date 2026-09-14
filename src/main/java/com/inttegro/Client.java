@@ -1723,20 +1723,19 @@ public class Client {
         /**
          * Configures payout destination financial accounts per currency (POST /payouts/set_destinations).
          *
-         * <p>Maps each currency to a financial account ID where payouts in that currency should be sent.
-         * For example, map "ghs" to a Ghana mobile money account and "usd" to a US bank account. Payouts
-         * will automatically route to the appropriate destination based on the balance currency.</p>
+         * <p>Assigns the supported GHS currency to the financial account where Ghana cedi payouts
+         * should be sent.</p>
          *
-         * @param destinations map of currency codes to financial account IDs (e.g., {"ghs": "fa_123", "usd": "fa_456"})
-         * @return {@link PayoutSettings} with updated payout settings
+         * @param destinations typed supported-currency destination assignments
+         * @return {@link PayoutSettingsMutation} with updated payout settings
          * @throws IOException if network communication fails
          * @throws InterruptedException if the request is interrupted
          * @throws ApiException if invalid account IDs, unsupported currencies, or accounts not compatible with currencies
          */
-        public PayoutSettings setDestinations(PayoutDestinations destinations) throws IOException, InterruptedException, ApiException {
+        public PayoutSettingsMutation setDestinations(PayoutDestinations destinations) throws IOException, InterruptedException, ApiException {
             Map<String, Object> body = new HashMap<>();
             body.put("destinations", destinations);
-            return client.requestResource("/payouts/set_destinations", body, "settings", PayoutSettings.class);
+            return client.requestResource("/payouts/set_destinations", body, "settings", PayoutSettingsMutation.class);
         }
 
         /**
@@ -1745,13 +1744,13 @@ public class Client {
          * <p>Returns payout schedule configuration (automatic or manual), destination mappings per currency,
          * FX conversion settings, and any schedule-specific parameters.</p>
          *
-         * @return {@link PayoutSettings} with payout configuration
+         * @return {@link PayoutSettingsLookup} with payout configuration
          * @throws IOException if network communication fails
          * @throws InterruptedException if the request is interrupted
          * @throws ApiException if unauthorized (401)
          */
-        public PayoutSettings settings() throws IOException, InterruptedException, ApiException {
-            return client.requestResource("/payouts/settings", new HashMap<>(), "settings", PayoutSettings.class);
+        public PayoutSettingsLookup settings() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/settings", new HashMap<>(), "settings", PayoutSettingsLookup.class);
         }
 
         /**
@@ -1761,17 +1760,17 @@ public class Client {
          * only occur when explicitly triggered by you. Use this when you need full control over when funds
          * are transferred from your balance to your bank accounts.</p>
          *
-         * @return {@link PayoutSettings} with updated settings showing manual schedule
+         * @return {@link PayoutSettingsMutation} with updated settings showing manual schedule
          * @throws IOException if network communication fails
          * @throws InterruptedException if the request is interrupted
          * @throws ApiException if unauthorized (401) or already in manual mode
          */
-        public PayoutSettings disableAutomatic() throws IOException, InterruptedException, ApiException {
-            return client.requestResource("/payouts/disable", new HashMap<>(), "settings", PayoutSettings.class);
+        public PayoutSettingsMutation disableAutomatic() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/disable", new HashMap<>(), "settings", PayoutSettingsMutation.class);
         }
 
-        public PayoutSettings enableAutomatic() throws IOException, InterruptedException, ApiException {
-            return client.requestResource("/payouts/enable", new HashMap<>(), "settings", PayoutSettings.class);
+        public PayoutSettingsMutation enableAutomatic() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/enable", new HashMap<>(), "settings", PayoutSettingsMutation.class);
         }
 
         /**
@@ -1781,13 +1780,13 @@ public class Client {
          * For example, a GHS balance can be paid out to a USD bank account with automatic conversion.
          * Exchange rates are applied at the time of payout execution.</p>
          *
-         * @return {@link PayoutSettings} with FX enabled in settings
+         * @return {@link PayoutSettingsMutation} with FX enabled in settings
          * @throws IOException if network communication fails
          * @throws InterruptedException if the request is interrupted
          * @throws ApiException if unauthorized (401) or FX not supported for your account
          */
-        public PayoutSettings enableFX() throws IOException, InterruptedException, ApiException {
-            return client.requestResource("/payouts/enable_fx", new HashMap<>(), "settings", PayoutSettings.class);
+        public PayoutSettingsMutation enableFX() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/enable_fx", new HashMap<>(), "settings", PayoutSettingsMutation.class);
         }
 
         /**
@@ -1797,19 +1796,19 @@ public class Client {
          * destination accounts that match the balance currency. Attempting to payout to a mismatched
          * currency account will fail.</p>
          *
-         * @return {@link PayoutSettings} with FX disabled in settings
+         * @return {@link PayoutSettingsMutation} with FX disabled in settings
          * @throws IOException if network communication fails
          * @throws InterruptedException if the request is interrupted
          * @throws ApiException if unauthorized (401)
          */
-        public PayoutSettings disableFX() throws IOException, InterruptedException, ApiException {
-            return client.requestResource("/payouts/disable_fx", new HashMap<>(), "settings", PayoutSettings.class);
+        public PayoutSettingsMutation disableFX() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/disable_fx", new HashMap<>(), "settings", PayoutSettingsMutation.class);
         }
 
         /**
          * Retrieves a paginated list of payouts (POST /payouts/page).
          *
-         * <p>Returns recent payouts with pagination support. Use {@code page_index} and {@code page_size}
+         * <p>Returns recent payouts with pagination support. Use {@code page_number} and {@code page_size}
          * to control pagination. Payouts are returned in reverse chronological order (newest first).
          * Each payout includes amount, destination, status, and timestamps.</p>
          *
