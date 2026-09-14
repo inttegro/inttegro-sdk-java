@@ -1,27 +1,17 @@
 package com.inttegro.payouts;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Currency-to-financial-account payout routing. */
+/** Supported currency-to-financial-account payout assignments. */
 public final class PayoutDestinations {
-    private final Map<String, String> values = new LinkedHashMap<>();
+    /** Financial account that receives Ghana cedi payouts. */
+    @JsonProperty("ghs") public String ghs;
 
     public PayoutDestinations() {}
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public PayoutDestinations(Map<String, String> values) {
-        if (values != null) values.forEach(this::set);
+
+    public static PayoutDestinations ghs(String financialAccountId) {
+        PayoutDestinations destinations = new PayoutDestinations();
+        destinations.ghs = financialAccountId;
+        return destinations;
     }
-    public PayoutDestinations set(String currency, String financialAccountId) {
-        if (currency == null || currency.isBlank()) throw new IllegalArgumentException("currency cannot be blank");
-        if (financialAccountId == null || financialAccountId.isBlank()) throw new IllegalArgumentException("financial account id cannot be blank");
-        values.put(currency, financialAccountId);
-        return this;
-    }
-    public PayoutDestinations remove(String currency) { values.remove(currency); return this; }
-    public String get(String currency) { return values.get(currency); }
-    @JsonValue public Map<String, String> values() { return Collections.unmodifiableMap(new LinkedHashMap<>(values)); }
 }
