@@ -39,7 +39,7 @@
         <jackson.version>2.22.2</jackson.version>
         <junit.version>5.10.2</junit.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <opentelemetry.version>1.65.0</opentelemetry.version>
+        <opentelemetry.version>1.66.0</opentelemetry.version>
     </properties>
 
     <dependencies>
