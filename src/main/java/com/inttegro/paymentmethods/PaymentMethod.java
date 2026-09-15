@@ -11,6 +11,7 @@ public class PaymentMethod {
     public OffsetDateTime archivedAt;
     @JsonProperty("customer_id")
     public String customerId;
+    public String fingerprint;
     public PaymentMethodType type;
     @JsonProperty("mobile_money")
     public MobileMoneySummary mobileMoney;
