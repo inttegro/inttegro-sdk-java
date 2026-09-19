@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inttegro.files.UploadRequestStatus;
 import com.inttegro.otp.InitiateOtpParams;
 import com.inttegro.otp.OtpAlphabetType;
+import com.inttegro.otp.OtpPurpose;
 import com.inttegro.otp.OtpTransmissionStatus;
 import com.inttegro.otp.OtpVerification;
 import com.inttegro.otp.OtpVerificationVerdict;
@@ -37,11 +38,13 @@ class DomainEnumsTest {
     void otpRequestsAndNestedResponsesRemainStronglyTyped() throws Exception {
         var request = InitiateOtpParams.builder()
                 .recipient("+233241234567")
+                .purpose(OtpPurpose.SIGN_IN)
                 .serviceName("Inttegro")
                 .tokenAlphabetType(OtpAlphabetType.NUMERIC)
                 .tokenSize(6)
                 .build();
         assertEquals("numeric", mapper.valueToTree(request).get("token_alphabet_type").asText());
+        assertEquals("sign_in", mapper.valueToTree(request).get("purpose").asText());
 
         var verification = mapper.readValue(
                 "{\"transaction\":{\"id\":\"ot_test\",\"status\":\"pending_verification\",\"transmission\":{\"status\":\"submitted\"}},\"verification_attempt\":{\"id\":\"ov_test\",\"result\":{\"verdict\":\"pass\"}}}",

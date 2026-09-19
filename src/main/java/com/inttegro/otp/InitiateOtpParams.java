@@ -9,7 +9,7 @@ public final class InitiateOtpParams {
     @JsonProperty("request_meta") public RequestMeta requestMeta;
     @JsonProperty("async_delivery") public Boolean asyncDelivery;
     @JsonProperty("message_template") public String messageTemplate;
-    public String purpose;
+    public OtpPurpose purpose;
     public String recipient;
     public String sender;
     @JsonProperty("service_name") public String serviceName;
@@ -26,7 +26,7 @@ public final class InitiateOtpParams {
         public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public Builder asyncDelivery(boolean asyncDelivery) { params.asyncDelivery = asyncDelivery; return this; }
         public Builder messageTemplate(String messageTemplate) { params.messageTemplate = messageTemplate; return this; }
-        public Builder purpose(String purpose) { params.purpose = purpose; return this; }
+        public Builder purpose(OtpPurpose purpose) { params.purpose = purpose; return this; }
         public Builder recipient(String recipient) { params.recipient = recipient; return this; }
         public Builder sender(String sender) { params.sender = sender; return this; }
         public Builder serviceName(String serviceName) { params.serviceName = serviceName; return this; }
