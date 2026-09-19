@@ -2,14 +2,17 @@ package com.inttegro.orders;
 
 import com.inttegro.CustomData;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.inttegro.prices.PriceParams;
 import com.inttegro.products.ProductType;
 import java.util.Map;
 
 /** Product line-item fields supplied in an order request. */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductLineItemParams {
     public String id;
+    @JsonProperty("product_id") public String productId;
     public ProductType type;
     public String name;
     public String about;
@@ -24,6 +27,7 @@ public class ProductLineItemParams {
     public static class Builder {
         private final ProductLineItemParams item = new ProductLineItemParams();
         public Builder id(String id) { item.id = id; return this; }
+	public Builder productId(String productId) { item.productId = productId; return this; }
         public Builder type(ProductType type) { item.type = type; return this; }
         public Builder name(String name) { item.name = name; return this; }
         public Builder about(String about) { item.about = about; return this; }
