@@ -23,6 +23,8 @@ import com.inttegro.prices.PriceParams;
 import com.inttegro.products.*;
 import com.inttegro.purchaseintents.*;
 import com.inttegro.refunds.*;
+import com.inttegro.search.ResourceSearchPage;
+import com.inttegro.search.ResourceSearchRequest;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.StatusCode;
@@ -110,6 +112,69 @@ class ClientTest {
         assertEquals("req_123", response.getRequestId());
         assertEquals("15", response.getRetryAfter());
         assertEquals("req_123", response.getMeta().get("request_id"));
+    }
+
+    @Test
+    void resourceSearchIsTypedAndAvailableOnEverySupportedResource() throws Exception {
+        List<String> requestBodies = new ArrayList<>();
+        String response = """
+                {"search":{
+                  "resource_types":["product"],
+                  "sort":{"field":"relevance","direction":"desc"},
+                  "page_size":10,
+                  "result_count":1,
+                  "has_more":false,
+                  "total":{"value":1,"relation":"exact"},
+                  "resource_totals":[{"resource_type":"product","value":1,"relation":"exact"}],
+                  "results":[{
+                    "resource":{"type":"product","id":"prod_123"},
+                    "title":"Tea guide",
+                    "amount":{"currency":"ghs","value":5000},
+                    "updated_at":"2026-09-21T12:00:00Z"
+                  }],
+                  "facets":[],
+                  "next_cursor":null,
+                  "freshness":{"state":"current","observed_at":"2026-09-21T12:00:01Z","resources":[]}
+                }}
+                """;
+        for (String path : List.of(
+                "/customers/search",
+                "/financial_accounts/search",
+                "/orders/search",
+                "/payouts/search",
+                "/products/search"
+        )) {
+            JsonHandler handler = new JsonHandler(200, response);
+            server.createContext(path, exchange -> {
+                requestBodies.add(new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+                handler.handle(exchange);
+            });
+        }
+        server.start();
+
+        Client client = new Client("sk_test_123", baseUrl, null);
+        ResourceSearchRequest request = ResourceSearchRequest.builder()
+                .text("tea")
+                .sort(ResourceSearchRequest.Sort.of(
+                        ResourceSearchRequest.SortField.RELEVANCE,
+                        ResourceSearchRequest.SortDirection.DESC
+                ))
+                .pageSize(10)
+                .build();
+
+        List<ResourceSearchPage> pages = List.of(
+                client.customers().search(request),
+                client.financialAccounts().search(request),
+                client.orders().search(request),
+                client.payouts().search(request),
+                client.products().search(request)
+        );
+
+        assertEquals(5, pages.size());
+        assertTrue(requestBodies.stream().noneMatch(body -> body.contains("request_meta")));
+        assertEquals("prod_123", pages.get(4).results.get(0).resource.id);
+        assertEquals(5000L, pages.get(4).results.get(0).amount.value);
+        assertEquals(ResourceSearchPage.FreshnessState.CURRENT, pages.get(4).freshness.state);
     }
 
     @Test
