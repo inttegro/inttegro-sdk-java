@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 7.1.0 - 2026-09-21
+
+- Added typed search across customers, financial accounts, orders, payouts, and
+  products, including filters, facets, sorting, cursor pagination, totals, and
+  freshness metadata.
+- Added typed verification purposes for OTP initiation requests.
+
 ## 7.0.0 - 2026-09-14
 
 - Breaking: replaced payout maps and generic payloads with named request,

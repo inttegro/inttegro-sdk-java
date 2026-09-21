@@ -26,6 +26,8 @@ import com.inttegro.products.*;
 import com.inttegro.purchaseintents.*;
 import com.inttegro.refunds.*;
 import com.inttegro.specifications.*;
+import com.inttegro.search.ResourceSearchPage;
+import com.inttegro.search.ResourceSearchRequest;
 import com.inttegro.diagnostics.ErrorReporter;
 import com.inttegro.diagnostics.ErrorReportingPolicy;
 import io.opentelemetry.api.GlobalOpenTelemetry;
@@ -77,7 +79,7 @@ public class Client {
     private static final String DEFAULT_BASE_URL = "https://api.inttegro.com";
     private static final String USER_AGENT = "inttegro-sdk-java/" + VERSION;
     private static final Set<String> NON_IDEMPOTENT_POST_ACTIONS = Set.of(
-            "lookup", "page", "settings", "countries", "contents", "balances", "render_preview"
+            "lookup", "page", "search", "settings", "countries", "contents", "balances", "render_preview"
     );
 
     private final String apiKey;
@@ -1256,6 +1258,10 @@ public class Client {
             return requestResource("/orders/page", params, "page", OrderPage.class);
         }
 
+        public ResourceSearchPage search(ResourceSearchRequest request) throws IOException, InterruptedException, ApiException {
+            return requestResource("/orders/search", request, "search", ResourceSearchPage.class);
+        }
+
         private Order requestOrder(String path, Object params) throws IOException, InterruptedException, ApiException {
             return requestResource(path, params, "order", Order.class);
         }
@@ -1822,6 +1828,10 @@ public class Client {
             return client.requestResource("/payouts/page", params, "page", PayoutPage.class);
         }
 
+        public ResourceSearchPage search(ResourceSearchRequest request) throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/payouts/search", request, "search", ResourceSearchPage.class);
+        }
+
         public Payout lookup(String payoutId) throws IOException, InterruptedException, ApiException {
             return lookup(LookupPayoutParams.builder().payoutId(payoutId).build());
         }
@@ -1983,6 +1993,10 @@ public class Client {
             return client.requestResource("/financial_accounts/page", params, "page", FinancialAccountsPage.class);
         }
 
+        public ResourceSearchPage search(ResourceSearchRequest request) throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/financial_accounts/search", request, "search", ResourceSearchPage.class);
+        }
+
         /**
          * Updates a financial account (POST /financial_accounts/update).
          *
@@ -2055,6 +2069,10 @@ public class Client {
         public CustomersPage page(PageCustomersParams params) throws IOException, InterruptedException, ApiException {
             return client.requestResource("/customers/page", params, "page", CustomersPage.class);
         }
+
+        public ResourceSearchPage search(ResourceSearchRequest request) throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/customers/search", request, "search", ResourceSearchPage.class);
+        }
     }
 
     public static class ProductsClient {
@@ -2106,6 +2124,10 @@ public class Client {
 
         public ProductPage page(PageProductsParams params) throws IOException, InterruptedException, ApiException {
             return client.requestResource("/products/page", params, "page", ProductPage.class);
+        }
+
+        public ResourceSearchPage search(ResourceSearchRequest request) throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/products/search", request, "search", ResourceSearchPage.class);
         }
     }
 
