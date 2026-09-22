@@ -402,13 +402,17 @@ class ClientTest {
     void balanceTransactionsDeserializeSemanticSourcesAndOrderEmbedding() throws Exception {
         ObjectMapper mapper = mapper();
         BalanceTransaction payment = mapper.readValue(
-                "{\"id\":\"bt_payment\",\"type\":\"payment\",\"payment_id\":\"py_123\",\"order_id\":\"or_123\",\"amount\":{\"currency\":\"ghs\",\"value\":2500},\"created_at\":\"2026-08-31T12:00:00Z\"}",
+		"{\"id\":\"bt_payment\",\"type\":\"payment\",\"payment_id\":\"py_123\",\"order_id\":\"or_123\",\"amount\":{\"currency\":\"ghs\",\"value\":2500},\"available_amount\":{\"currency\":\"ghs\",\"value\":1500},\"pending_amount\":{\"currency\":\"ghs\",\"value\":1000},\"spent_amount\":{\"currency\":\"ghs\",\"value\":0},\"allocations\":[{\"id\":\"bta_123\",\"type\":\"payout\",\"status\":\"pending\",\"payout\":{\"id\":\"po_123\",\"amount\":{\"currency\":\"ghs\",\"value\":1000}},\"created_at\":\"2026-08-31T12:01:00Z\",\"updated_at\":\"2026-08-31T12:01:00Z\"}],\"created_at\":\"2026-08-31T12:00:00Z\"}",
                 BalanceTransaction.class
         );
         assertEquals(BalanceTransactionType.PAYMENT, payment.type);
         assertEquals("py_123", payment.sourceId());
         assertNull(payment.refundId);
         assertEquals(2500L, payment.amount.value);
+	assertEquals(1500L, payment.availableAmount.value);
+	assertEquals(BalanceTransactionAllocationType.PAYOUT, payment.allocations.get(0).type);
+	assertEquals(BalanceTransactionAllocationStatus.PENDING, payment.allocations.get(0).status);
+	assertEquals("po_123", payment.allocations.get(0).payout.id);
 
         BalanceTransaction refund = mapper.readValue(
                 "{\"id\":\"bt_refund\",\"type\":\"refund\",\"refund_id\":\"rf_123\",\"order_id\":\"or_123\",\"amount\":{\"currency\":\"ghs\",\"value\":500},\"created_at\":\"2026-08-31T12:01:00Z\"}",
