@@ -9,7 +9,7 @@ import java.util.List;
 /** A payout scheduled from an Inttegro balance to a destination financial account. */
 public class Payout {
     public Amount amount;
-    @JsonProperty("balance_transactions") public List<String> balanceTransactions;
+    @JsonProperty("balance_transactions") public List<PayoutBalanceTransaction> balanceTransactions;
     @JsonProperty("canceled_at") public OffsetDateTime canceledAt;
     @JsonProperty("custom_data") public CustomData customData;
     @JsonProperty("destination_id") public String destinationId;
