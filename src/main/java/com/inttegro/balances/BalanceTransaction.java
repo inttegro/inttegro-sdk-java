@@ -10,8 +10,6 @@ public class BalanceTransaction {
     public BalanceTransactionType type;
     @JsonProperty("payment_id") public String paymentId;
     @JsonProperty("refund_id") public String refundId;
-    /** @deprecated Inspect {@link #allocations} because one transaction can fund many payouts. */
-    @Deprecated
     @JsonProperty("payout_id") public String payoutId;
     @JsonProperty("order_id") public String orderId;
     public Amount amount;
@@ -35,6 +33,10 @@ public class BalanceTransaction {
         }
         if (type == BalanceTransactionType.REFUND && refundId != null && !refundId.isBlank() && paymentId == null) {
             return refundId;
+        }
+        if (type == BalanceTransactionType.PAYOUT && payoutId != null && !payoutId.isBlank()
+                && paymentId == null && refundId == null && orderId == null) {
+            return payoutId;
         }
         return null;
     }

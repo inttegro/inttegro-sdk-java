@@ -10,6 +10,7 @@ import java.util.List;
 public class Payout {
     public Amount amount;
     @JsonProperty("balance_transactions") public List<PayoutBalanceTransaction> balanceTransactions;
+    @JsonProperty("balance_transaction_id") public String balanceTransactionId;
     @JsonProperty("canceled_at") public OffsetDateTime canceledAt;
     @JsonProperty("custom_data") public CustomData customData;
     @JsonProperty("destination_id") public String destinationId;
