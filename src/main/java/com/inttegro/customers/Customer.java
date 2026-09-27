@@ -10,6 +10,7 @@ public class Customer {
     @JsonProperty("billing_address")
     public Address billingAddress;
     public String id;
+    public String fingerprint;
     public String name;
     public String title;
     public String suffix;

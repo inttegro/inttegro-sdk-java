@@ -1,6 +1,8 @@
 package com.inttegro;
 
 import com.inttegro.orders.Order;
+import com.inttegro.customers.Customer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inttegro.orders.OrderStatus;
 import com.inttegro.paymentmethods.PaymentMethod;
 import com.inttegro.payments.Payment;
@@ -19,6 +21,14 @@ import java.time.OffsetDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResourceSemanticsTest {
+    @Test
+    void customerFingerprintIsRequiredAndRoundTrips() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        Customer customer = mapper.readValue("{\"id\":\"cu_1\",\"fingerprint\":\"cfp_v1_app_buyer\"}", Customer.class);
+        assertEquals("cfp_v1_app_buyer", customer.fingerprint);
+        assertTrue(mapper.writeValueAsString(customer).contains("\"fingerprint\":\"cfp_v1_app_buyer\""));
+    }
+
     @Test
     void answersPaymentAndOrderQuestions() {
         PaymentNextAction action = new PaymentNextAction();
