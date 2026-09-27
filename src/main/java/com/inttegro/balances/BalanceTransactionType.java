@@ -7,5 +7,7 @@ public enum BalanceTransactionType {
     @JsonProperty("payment")
     PAYMENT,
     @JsonProperty("refund")
-    REFUND
+    REFUND,
+    @JsonProperty("payout")
+    PAYOUT
 }
