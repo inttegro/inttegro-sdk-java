@@ -2087,6 +2087,7 @@ public class Client {
         }
 
         public ProductDefaultUnitPrice addPrice(AddProductPriceParams params) throws IOException, InterruptedException, ApiException {
+            params.validate();
             return client.requestResource("/products/add_price", params, "price", ProductDefaultUnitPrice.class);
         }
 
@@ -2139,6 +2140,7 @@ public class Client {
         }
 
         public CatalogPrice create(CatalogPriceParams params) throws IOException, InterruptedException, ApiException {
+            params.validate();
             return client.requestResource("/prices/create", params, "price", CatalogPrice.class);
         }
 

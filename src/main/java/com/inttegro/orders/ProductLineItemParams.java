@@ -19,6 +19,7 @@ public class ProductLineItemParams {
     public Long quantity;
     public PriceParams price;
     @JsonProperty("price_id") public String priceId;
+    @JsonProperty("customer_selected_price") public CustomerSelectedPriceInput customerSelectedPrice;
     public String reference;
     @JsonProperty("tax_code") public String taxCode;
     @JsonProperty("custom_data") public CustomData customData;
@@ -34,9 +35,24 @@ public class ProductLineItemParams {
         public Builder quantity(long quantity) { item.quantity = quantity; return this; }
         public Builder price(PriceParams price) { item.price = price; return this; }
         public Builder priceId(String priceId) { item.priceId = priceId; return this; }
+        public Builder customerSelectedPrice(CustomerSelectedPriceInput selectedPrice) { item.customerSelectedPrice = selectedPrice; return this; }
         public Builder reference(String reference) { item.reference = reference; return this; }
         public Builder taxCode(String taxCode) { item.taxCode = taxCode; return this; }
         public Builder customData(CustomData customData) { item.customData = customData; return this; }
-        public ProductLineItemParams build() { return item; }
+        public ProductLineItemParams build() { item.validate(); return item; }
+    }
+
+    public void validate() {
+        if (customerSelectedPrice == null) {
+            return;
+        }
+        customerSelectedPrice.validate();
+        boolean catalogProduct = productId != null && !productId.isBlank() && quantity != null && quantity > 0;
+        boolean mixedPriceChoice = price != null || priceId != null;
+        boolean inlineFields = id != null || type != null || name != null || about != null ||
+                reference != null || taxCode != null || customData != null;
+        if (!catalogProduct || mixedPriceChoice || inlineFields) {
+            throw new IllegalArgumentException("customer_selected_price is valid only for a catalog product and cannot be combined with price or price_id");
+        }
     }
 }

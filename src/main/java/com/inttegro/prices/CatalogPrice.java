@@ -11,7 +11,12 @@ public class CatalogPrice {
     public String label;
     public String about;
     public Boolean active;
+    public PriceType type;
     public Amount nominal;
+    @JsonProperty("fixed_amount")
+    public Amount fixedAmount;
+    @JsonProperty("customer_selected_amount")
+    public CustomerSelectedAmount customerSelectedAmount;
     @JsonProperty("product_id")
     public String productId;
     public Product product;
