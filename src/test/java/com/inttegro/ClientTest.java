@@ -434,19 +434,30 @@ class ClientTest {
         ObjectMapper mapper = mapper();
         var params = com.inttegro.prices.CatalogPriceParams.builder()
                 .productId("prod_123")
-                .amount(AmountParams.of(Currency.GHS, 2500))
+                .type(com.inttegro.prices.PriceType.FIXED_AMOUNT)
+                .fixedAmount(AmountParams.of(Currency.GHS, 2500))
                 .build();
 
         var body = mapper.valueToTree(params);
-        assertEquals("ghs", body.get("amount").get("currency").asText());
-        assertEquals(2500L, body.get("amount").get("value").asLong());
+        assertEquals("fixed_amount", body.get("type").asText());
+        assertEquals("ghs", body.get("fixed_amount").get("currency").asText());
+        assertEquals(2500L, body.get("fixed_amount").get("value").asLong());
+        assertFalse(body.has("amount"));
+        var productPrice = com.inttegro.products.AddProductPriceParams.builder()
+                .productId("prod_123")
+                .type(com.inttegro.prices.PriceType.FIXED_AMOUNT)
+                .fixedAmount(AmountParams.of(Currency.GHS, 2500))
+                .build();
+        var productPriceBody = mapper.valueToTree(productPrice);
+        assertEquals("fixed_amount", productPriceBody.get("type").asText());
+        assertFalse(productPriceBody.has("amount"));
         assertFalse(body.has("currency"));
         assertEquals(
                 "{\"currency\":\"ghs\",\"value\":3005}",
                 mapper.writeValueAsString(PriceParams.of(Currency.GHS, 3005))
         );
         var catalogPrice = mapper.readValue(
-                "{\"id\":\"pr_123\",\"active\":true,\"nominal\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
+                "{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"nominal\":{\"currency\":\"ghs\",\"value\":3005},\"fixed_amount\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
                 com.inttegro.prices.CatalogPrice.class
         );
         assertEquals("prod_123", catalogPrice.productId);
@@ -455,6 +466,45 @@ class ClientTest {
         updateIntent.expiresAt = OffsetDateTime.parse("2026-10-01T12:00:00Z");
         assertTrue(mapper.writeValueAsString(updateIntent).contains("\"expires_at\":\"2026-10-01T12:00:00Z\""));
         assertEquals("\"mtn\"", mapper.writeValueAsString(MobileMoneyNetwork.MTN));
+
+        var selectedDefinition = com.inttegro.prices.CustomerSelectedAmountParams.builder()
+                .currency(Currency.GHS)
+                .minimum(500)
+                .suggestedAmounts(List.of(
+                        com.inttegro.prices.SuggestedAmountParams.builder()
+                                .id("supporter")
+                                .value(1000)
+                                .recommended(true)
+                                .build()
+                ))
+                .build();
+        var selectedParams = com.inttegro.prices.CatalogPriceParams.builder()
+                .productId("prod_donation")
+                .type(com.inttegro.prices.PriceType.CUSTOMER_SELECTED_AMOUNT)
+                .customerSelectedAmount(selectedDefinition)
+                .build();
+        var selectedBody = mapper.valueToTree(selectedParams);
+        assertEquals("customer_selected_amount", selectedBody.get("type").asText());
+        assertEquals(1000L, selectedBody.get("customer_selected_amount").get("suggested_amounts").get(0).get("value").asLong());
+        assertFalse(selectedBody.has("amount"));
+
+        var selectedProduct = ProductLineItemParams.builder()
+                .productId("prod_donation")
+                .quantity(1)
+                .customerSelectedPrice(CustomerSelectedPriceInput.builder()
+                        .priceId("pr_donation")
+                        .selectedAmount(AmountParams.of(Currency.GHS, 750))
+                        .build())
+                .build();
+        var selectedProductBody = mapper.valueToTree(selectedProduct);
+        assertEquals("pr_donation", selectedProductBody.get("customer_selected_price").get("price_id").asText());
+        assertThrows(IllegalArgumentException.class, () -> ProductLineItemParams.builder()
+                .quantity(1)
+                .customerSelectedPrice(CustomerSelectedPriceInput.builder()
+                        .priceId("pr_donation")
+                        .selectedAmount(AmountParams.of(Currency.GHS, 750))
+                        .build())
+                .build());
     }
 
     @Test
@@ -691,7 +741,8 @@ class ClientTest {
 
         AddProductPriceParams add = new AddProductPriceParams();
         add.productId = "prod_123";
-        add.amount = AmountParams.of(Currency.GHS, 5000);
+        add.type = com.inttegro.prices.PriceType.FIXED_AMOUNT;
+        add.fixedAmount = AmountParams.of(Currency.GHS, 5000);
         add.setAsDefault = true;
         assertEquals("pr_123", client.products().addPrice(add).id);
 

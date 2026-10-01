@@ -74,7 +74,7 @@ import java.util.UUID;
      * Thread safety: immutable after construction; share freely across goroutines/threads.
      */
 public class Client {
-    public static final String VERSION = "8.1.0";
+    public static final String VERSION = "8.2.0";
 
     private static final String DEFAULT_BASE_URL = "https://api.inttegro.com";
     private static final String USER_AGENT = "inttegro-sdk-java/" + VERSION;
@@ -2087,6 +2087,7 @@ public class Client {
         }
 
         public ProductDefaultUnitPrice addPrice(AddProductPriceParams params) throws IOException, InterruptedException, ApiException {
+            params.validate();
             return client.requestResource("/products/add_price", params, "price", ProductDefaultUnitPrice.class);
         }
 
@@ -2139,6 +2140,7 @@ public class Client {
         }
 
         public CatalogPrice create(CatalogPriceParams params) throws IOException, InterruptedException, ApiException {
+            params.validate();
             return client.requestResource("/prices/create", params, "price", CatalogPrice.class);
         }
 
