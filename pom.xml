@@ -36,7 +36,7 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.22.2</jackson.version>
+        <jackson.version>2.22.3</jackson.version>
         <junit.version>5.10.2</junit.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <opentelemetry.version>1.65.0</opentelemetry.version>
