@@ -2,7 +2,8 @@
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/inttegro/inttegro-sdk-java/badge)](https://scorecard.dev/viewer/?uri=github.com/inttegro/inttegro-sdk-java)
 
-The official Java client for building server-side Inttegro integrations.
+Accept GHS payments, present Ghana Mobile Money checkout, and manage orders,
+refunds, and payouts with Inttegro's typed server-side Java SDK.
 
 [API documentation](https://java.inttegro.dev/) · [Integration guides](https://studio.inttegro.com/sdks/java)
 

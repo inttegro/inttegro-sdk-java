@@ -6,7 +6,7 @@
     <artifactId>inttegro-sdk-java</artifactId>
     <version>8.2.0</version>
     <name>Inttegro Java SDK</name>
-    <description>Official Java SDK for the Inttegro API</description>
+    <description>Typed Java SDK for Inttegro GHS checkout and Ghana Mobile Money payments</description>
     <url>https://java.inttegro.dev/</url>
 
     <licenses>
