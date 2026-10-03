@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 8.3.0 - 2026-10-03
+
+- Added typed hosted Buy-page text overrides to Purchase Intent create,
+  update, and response models, including explicit default restoration through
+  the wire-shaped update overload.
+- Added the application-scoped financial-account fingerprint to typed
+  responses.
+
 ## 8.2.0 - 2026-10-01
 
 - Added typed fixed and customer-selected catalog price definitions, suggested
