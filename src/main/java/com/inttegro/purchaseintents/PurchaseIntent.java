@@ -15,6 +15,7 @@ public class PurchaseIntent {
     public OffsetDateTime inactiveAt;
     public PurchaseIntentMerchant merchant;
     public PurchaseIntentPrice price;
+    public PurchaseIntentPresentation presentation;
     public PurchaseIntentProduct product;
     public PurchaseIntentQuantity quantity;
     public PurchaseIntentStatus status;

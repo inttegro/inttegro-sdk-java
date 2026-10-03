@@ -15,6 +15,7 @@ public class FinancialAccount {
     public String reference;
     public String currency;
     public String description;
+    public String fingerprint;
     @JsonProperty("pull_configuration") public PullPushConfig pullConfiguration;
     @JsonProperty("push_configuration") public PullPushConfig pushConfiguration;
     public WalletConfig wallet;

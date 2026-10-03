@@ -14,6 +14,7 @@ public class CreatePurchaseIntentParams {
     public PurchaseIntentUsage usage;
     @JsonProperty("expires_at")
     public OffsetDateTime expiresAt;
+    public PurchaseIntentPresentation presentation;
 
     public static Builder builder() { return new Builder(); }
 
@@ -26,6 +27,7 @@ public class CreatePurchaseIntentParams {
         public Builder quantity(PurchaseIntentQuantity quantity) { params.quantity = quantity; return this; }
         public Builder usage(PurchaseIntentUsage usage) { params.usage = usage; return this; }
         public Builder expiresAt(OffsetDateTime expiresAt) { params.expiresAt = expiresAt; return this; }
+        public Builder presentation(PurchaseIntentPresentation presentation) { params.presentation = presentation; return this; }
         public CreatePurchaseIntentParams build() { return params; }
     }
 }

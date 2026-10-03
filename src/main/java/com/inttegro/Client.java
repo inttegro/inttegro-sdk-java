@@ -74,7 +74,7 @@ import java.util.UUID;
      * Thread safety: immutable after construction; share freely across goroutines/threads.
      */
 public class Client {
-    public static final String VERSION = "8.2.0";
+    public static final String VERSION = "8.3.0";
 
     private static final String DEFAULT_BASE_URL = "https://api.inttegro.com";
     private static final String USER_AGENT = "inttegro-sdk-java/" + VERSION;
@@ -573,6 +573,7 @@ public class Client {
             return new HashMap<>();
         }
         Map<String, Object> fields;
+        boolean preserveExplicitNulls = params instanceof Map<?, ?>;
         if (params instanceof Map<?, ?> map) {
             fields = new HashMap<>();
             for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -581,7 +582,9 @@ public class Client {
         } else {
             fields = mapper.convertValue(params, Map.class);
         }
-        pruneNulls(fields);
+        if (!preserveExplicitNulls) {
+            pruneNulls(fields);
+        }
         return fields;
     }
 
@@ -2293,6 +2296,14 @@ public class Client {
         }
 
         public PurchaseIntent update(UpdatePurchaseIntentParams params) throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/purchase_intents/update", params, "purchase_intent", PurchaseIntent.class);
+        }
+
+        /**
+         * Updates a purchase intent from a wire-shaped map. Map entries whose values are null are
+         * preserved, allowing callers to restore product-aware Buy page text defaults.
+         */
+        public PurchaseIntent update(Map<String, Object> params) throws IOException, InterruptedException, ApiException {
             return client.requestResource("/purchase_intents/update", params, "purchase_intent", PurchaseIntent.class);
         }
 
