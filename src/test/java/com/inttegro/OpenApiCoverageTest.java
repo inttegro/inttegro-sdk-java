@@ -23,6 +23,7 @@ class OpenApiCoverageTest {
     );
     private static final Set<String> CLIENT_CHECKOUT_OPERATIONS = Set.of(
             "/checkout/lookup",
+            "/checkout/select_amount",
             "/checkout/pay",
             "/checkout/request_confirmation",
             "/checkout/confirm_payment"

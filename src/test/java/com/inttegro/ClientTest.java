@@ -1,5 +1,6 @@
 package com.inttegro;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -44,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -386,6 +388,7 @@ class ClientTest {
         String json = "{" +
                 "\"allow_variants\":false,\"created_at\":\"2026-09-09T12:00:00Z\",\"id\":\"sale_123\"," +
                 "\"merchant\":{\"organization_name\":\"Tea House Ltd\"}," +
+                "\"presentation\":{\"buy_page\":{\"text\":{\"checkout_section_title\":\"Support this cause\"}}}," +
                 "\"product\":{\"active\":true,\"created_at\":\"2026-09-09T11:00:00Z\",\"dimensions\":{\"digital\":{\"bytes\":1024}},\"id\":\"prod_123\",\"name\":\"Tea guide\",\"type\":\"digital\"}," +
                 "\"quantity\":{\"min\":1},\"status\":\"active\"," +
                 "\"usage\":{\"order\":{\"created_at\":\"2026-09-09T12:02:00Z\",\"id\":\"or_123\"},\"single_use\":true}}";
@@ -396,6 +399,47 @@ class ClientTest {
         assertEquals(1024.0, intent.product.dimensions.digital.bytes);
         assertEquals("or_123", intent.usage.order.id);
         assertEquals(PurchaseIntentStatus.ACTIVE, intent.status);
+        assertEquals("Support this cause", intent.presentation.buyPage.text.checkoutSectionTitle);
+
+        CreatePurchaseIntentParams create = CreatePurchaseIntentParams.builder()
+                .quantity(new PurchaseIntentQuantity())
+                .presentation(PurchaseIntentPresentation.builder()
+                        .buyPage(PurchaseIntentBuyPagePresentation.builder()
+                                .text(PurchaseIntentBuyPageText.builder()
+                                        .amountFieldLabel("Your contribution")
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+        assertTrue(mapper().writeValueAsString(create).contains("\"amount_field_label\":\"Your contribution\""));
+    }
+
+    @Test
+    void purchaseIntentUpdateMapPreservesExplicitTextReset() throws Exception {
+        AtomicReference<String> requestBody = new AtomicReference<>();
+        String response = "{\"purchase_intent\":{" +
+                "\"allow_variants\":false,\"created_at\":\"2026-09-09T12:00:00Z\",\"id\":\"sale_123\"," +
+                "\"quantity\":{\"min\":1},\"status\":\"active\",\"usage\":{\"multi_use\":true}}}";
+        server.createContext("/purchase_intents/update", exchange ->
+                captureJson(exchange, requestBody, response));
+        server.start();
+
+        Map<String, Object> text = new HashMap<>();
+        text.put("checkout_section_title", "Contribute now");
+        text.put("amount_field_label", null);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("id", "sale_123");
+        payload.put("presentation", Map.of("buy_page", Map.of("text", text)));
+
+        Client client = new Client("sk_test_123", baseUrl, null);
+        client.purchaseIntents().update(payload);
+
+        JsonNode sent = mapper().readTree(requestBody.get());
+        JsonNode sentText = sent.path("presentation").path("buy_page").path("text");
+        assertEquals("Contribute now", sentText.path("checkout_section_title").asText());
+        assertTrue(sentText.has("amount_field_label"));
+        assertTrue(sentText.get("amount_field_label").isNull());
+        assertFalse(sentText.has("primary_action_label"));
     }
 
     @Test
