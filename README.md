@@ -18,7 +18,7 @@ Requires Java 17 or newer.
 <dependency>
   <groupId>com.inttegro</groupId>
   <artifactId>inttegro-sdk-java</artifactId>
-  <version>6.0.0</version>
+  <version>9.0.0</version>
 </dependency>
 ```
 

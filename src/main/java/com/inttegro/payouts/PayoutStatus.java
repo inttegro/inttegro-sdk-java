@@ -8,6 +8,6 @@ public enum PayoutStatus {
     @JsonProperty("processing") PROCESSING,
     @JsonProperty("executing") EXECUTING,
     @JsonProperty("succeeded") SUCCEEDED,
-    @JsonProperty("invalid") INVALID,
+    @JsonProperty("failed") FAILED,
     @JsonProperty("canceled") CANCELED
 }

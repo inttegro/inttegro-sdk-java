@@ -566,15 +566,18 @@ class ClientTest {
     void payoutsDecodeCanonicalTypedFields() throws Exception {
         ObjectMapper mapper = mapper();
         var payout = mapper.readValue(
-                "{\"id\":\"po_123\",\"destination_id\":\"fa_ghs\",\"execute_after\":\"2026-09-14T09:00:00Z\",\"initiated_at\":\"2026-09-14T08:55:00Z\",\"max_amount\":{\"currency\":\"ghs\",\"value\":12500},\"status\":\"invalid\",\"balance_transactions\":[{\"id\":\"bt_123\",\"amount\":{\"currency\":\"ghs\",\"value\":20000},\"allocated_amount\":{\"currency\":\"ghs\",\"value\":12500}}],\"custom_data\":{\"batch\":\"weekly\"},\"error\":{\"cause\":\"provider unavailable\",\"message\":\"Payout failed\",\"occurred_at\":\"2026-09-14T09:05:00Z\",\"type\":\"network_error\"},\"failed_at\":\"2026-09-14T09:05:00Z\"}",
+                "{\"id\":\"po_123\",\"destination_id\":\"fa_ghs\",\"execute_after\":\"2026-09-14T09:00:00Z\",\"initiated_at\":\"2026-09-14T08:55:00Z\",\"max_amount\":{\"currency\":\"ghs\",\"value\":12500},\"status\":\"failed\",\"balance_transactions\":[{\"id\":\"bt_123\",\"amount\":{\"currency\":\"ghs\",\"value\":20000},\"allocated_amount\":{\"currency\":\"ghs\",\"value\":12500}}],\"custom_data\":{\"batch\":\"weekly\"},\"error\":{\"cause\":\"temporarily_unavailable\",\"message\":\"Payout processing was temporarily unavailable.\",\"occurred_at\":\"2026-09-14T09:05:00Z\",\"type\":\"temporarily_unavailable\"},\"failed_at\":\"2026-09-14T09:05:00Z\",\"failure\":{\"detail\":\"Payout processing was temporarily unavailable.\",\"reason\":\"temporarily_unavailable\",\"retryable\":true}}",
                 com.inttegro.payouts.Payout.class
         );
         assertEquals("bt_123", payout.balanceTransactions.get(0).id);
         assertEquals(Long.valueOf(20000), payout.balanceTransactions.get(0).amount.value);
         assertEquals(Long.valueOf(12500), payout.balanceTransactions.get(0).allocatedAmount.value);
         assertEquals("weekly", payout.customData.get("batch"));
-        assertEquals("network_error", payout.error.type);
+        assertEquals("temporarily_unavailable", payout.error.type);
         assertEquals(OffsetDateTime.parse("2026-09-14T09:05:00Z"), payout.failedAt);
+        assertEquals(com.inttegro.payouts.PayoutStatus.FAILED, payout.status);
+        assertEquals(com.inttegro.payouts.PayoutFailureReason.TEMPORARILY_UNAVAILABLE, payout.failure.reason);
+        assertTrue(payout.failure.retryable);
 
         var settings = mapper.readValue(
                 "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
