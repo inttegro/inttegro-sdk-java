@@ -14,11 +14,14 @@ public class Payout {
     @JsonProperty("canceled_at") public OffsetDateTime canceledAt;
     @JsonProperty("custom_data") public CustomData customData;
     @JsonProperty("destination_id") public String destinationId;
+    /** @deprecated Use {@link #failure} for stable, caller-safe failure information. */
+    @Deprecated
     public PayoutError error;
     @JsonProperty("execute_after") public OffsetDateTime executeAfter;
     @JsonProperty("executed_by") public String executedBy;
     @JsonProperty("expected_at") public OffsetDateTime expectedAt;
     @JsonProperty("failed_at") public OffsetDateTime failedAt;
+    public PayoutFailure failure;
     public String id;
     @JsonProperty("initiated_at") public OffsetDateTime initiatedAt;
     @JsonProperty("initiated_by") public String initiatedBy;
