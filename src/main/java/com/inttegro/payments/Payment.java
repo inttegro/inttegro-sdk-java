@@ -15,6 +15,7 @@ public class Payment {
     @JsonProperty("payment_method") public PaymentMethodSnapshot paymentMethod;
     @JsonProperty("billing_details") public PaymentBillingDetails billingDetails;
     public PaymentCustomer customer;
+    public PaymentReceipt receipt;
     @JsonProperty("latest_attempt") public PaymentAttempt latestAttempt;
     public Amount amount;
     @JsonProperty("next_action") public PaymentNextAction nextAction;
