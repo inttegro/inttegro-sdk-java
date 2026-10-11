@@ -646,7 +646,7 @@ class ClientTest {
 
     @Test
     void appsEndpointsMatchSpec() throws Exception {
-        String appBody = "{\"app\":{\"id\":\"app_123\",\"name\":\"My App\",\"created_at\":\"2026-07-10T00:00:00Z\"}}";
+        String appBody = "{\"app\":{\"id\":\"app_123\",\"name\":\"My App\",\"created_at\":\"2026-07-10T00:00:00Z\",\"capabilities\":{}}}";
         server.createContext("/apps/create", new JsonHandler(200, appBody));
         server.createContext("/apps/lookup", new JsonHandler(200, appBody));
         server.createContext("/apps/update", new JsonHandler(200, appBody));
