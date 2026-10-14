@@ -2224,6 +2224,11 @@ public class Client {
             return client.requestResource("/apps/lookup", Map.of(), "app", App.class);
         }
 
+        /** Retrieves the authenticated application's payment and payout capabilities. */
+        public AppCapabilities capabilities() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/apps/capabilities", Map.of(), "capabilities", AppCapabilities.class);
+        }
+
         /** Updates one or more attributes of the configured API key's application. */
         public App update(UpdateAppParams params) throws IOException, InterruptedException, ApiException {
             return client.requestResource("/apps/update", params, "app", App.class);
