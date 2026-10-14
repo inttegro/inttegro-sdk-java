@@ -21,7 +21,8 @@ class SemanticCollectionsTest {
             "CountrySpecifications.java",
             "CustomerBalance.java",
             "ProductDimensionDetails.java",
-            "PurchaseIntentVariant.java"
+            "PurchaseIntentVariant.java",
+            "App.java"
     );
 
     @Test

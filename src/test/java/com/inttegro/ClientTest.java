@@ -580,10 +580,12 @@ class ClientTest {
         assertTrue(payout.failure.retryable);
 
         var settings = mapper.readValue(
-                "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
+                "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"limits\":{\"amount\":{\"min\":{\"currency\":\"ghs\",\"value\":25000},\"max\":{\"currency\":\"ghs\",\"value\":9999999}}},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
                 com.inttegro.payouts.PayoutSettingsLookup.class
         );
         assertEquals("fa_ghs", settings.destinations.ghs);
+        assertEquals(Long.valueOf(25000), settings.limits.amount.min.value);
+        assertEquals(Long.valueOf(9999999), settings.limits.amount.max.value);
         assertEquals("168h", settings.schedule.agingSpec.tPlus);
         assertEquals("{\"ghs\":\"fa_ghs\"}", mapper.writeValueAsString(com.inttegro.payouts.PayoutDestinations.ghs("fa_ghs")));
     }
@@ -646,9 +648,10 @@ class ClientTest {
 
     @Test
     void appsEndpointsMatchSpec() throws Exception {
-        String appBody = "{\"app\":{\"id\":\"app_123\",\"name\":\"My App\",\"created_at\":\"2026-07-10T00:00:00Z\"}}";
+        String appBody = "{\"app\":{\"id\":\"app_123\",\"name\":\"My App\",\"created_at\":\"2026-07-10T00:00:00Z\",\"capabilities\":{}}}";
         server.createContext("/apps/create", new JsonHandler(200, appBody));
         server.createContext("/apps/lookup", new JsonHandler(200, appBody));
+        server.createContext("/apps/capabilities", new JsonHandler(200, "{\"capabilities\":{\"payments\":{\"status\":\"enabled\",\"status_changed_at\":\"2026-07-10T00:00:00Z\"},\"payouts\":{\"status\":\"restricted\",\"status_reason\":\"setup_incomplete\",\"status_changed_at\":\"2026-07-10T00:00:00Z\",\"requirements\":{\"currently_due\":[{\"code\":\"connect_payout_account\",\"description\":\"Connect a payout account.\",\"due_at\":null}]}}}}"));
         server.createContext("/apps/update", new JsonHandler(200, appBody));
         server.start();
 
@@ -657,12 +660,15 @@ class ClientTest {
                 CreateAppParams.builder().name("My App").build()
         );
         App lookedUp = client.apps().lookup();
+        AppCapabilities capabilities = client.apps().capabilities();
         App updated = client.apps().update(
                 UpdateAppParams.builder().alias("my-app").build()
         );
 
         assertEquals("app_123", created.id);
         assertEquals("app_123", lookedUp.id);
+        assertEquals("enabled", capabilities.payments.status);
+        assertEquals("connect_payout_account", capabilities.payouts.requirements.currentlyDue.get(0).code);
         assertEquals("app_123", updated.id);
     }
 

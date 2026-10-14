@@ -7,5 +7,6 @@ public final class PayoutSettingsMutation {
     public PayoutDestinations destinations;
     @JsonProperty("fx_enabled") public Boolean fxEnabled;
     public String id;
+    public PayoutSettingsLimits limits;
     public PayoutSettingsMutationSchedule schedule;
 }

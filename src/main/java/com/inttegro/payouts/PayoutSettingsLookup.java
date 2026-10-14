@@ -6,5 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class PayoutSettingsLookup {
     public PayoutDestinations destinations;
     @JsonProperty("fx_enabled") public Boolean fxEnabled;
+    public PayoutSettingsLimits limits;
     public PayoutSettingsLookupSchedule schedule;
 }
