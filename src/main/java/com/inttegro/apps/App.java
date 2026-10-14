@@ -1,7 +1,6 @@
 package com.inttegro.apps;
 
 import java.time.OffsetDateTime;
-import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +12,6 @@ public class App {
     @JsonProperty("created_at") public OffsetDateTime createdAt;
     @JsonProperty("updated_at") public OffsetDateTime updatedAt;
     @JsonProperty("archived_at") public OffsetDateTime archivedAt;
-    public Map<String, Object> capabilities;
+    public AppCapabilities capabilities;
     public AppRelationship relationship;
 }
