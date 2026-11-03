@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /** Aging rule returned after a payout settings mutation. */
 public final class PayoutSettingsMutationScheduleSpec {
     public String abide;
-    public String id;
+    @JsonProperty("public_id") public String publicId;
     public String label;
     @JsonProperty("t_plus") public String tPlus;
 }
