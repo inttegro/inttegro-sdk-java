@@ -580,10 +580,11 @@ class ClientTest {
         assertTrue(payout.failure.retryable);
 
         var settings = mapper.readValue(
-                "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"limits\":{\"amount\":{\"min\":{\"currency\":\"ghs\",\"value\":25000},\"max\":{\"currency\":\"ghs\",\"value\":9999999}}},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
+                "{\"destinations\":{\"ghs\":\"fa_ghs\"},\"limits\":{\"amount\":{\"min\":{\"currency\":\"ghs\",\"value\":25000},\"max\":{\"currency\":\"ghs\",\"value\":9999999}}},\"schedule\":{\"aging_spec\":{\"abide\":\"strict\",\"public_id\":\"bt_aging_spec_168_hourly\",\"label\":\"Seven days\",\"t_plus\":\"168h\"},\"description\":\"Weekly payouts\",\"interval\":\"weekly\",\"name\":\"Weekly\",\"schedule_on\":\"monday\",\"type\":\"automatic\"}}",
                 com.inttegro.payouts.PayoutSettingsLookup.class
         );
         assertEquals("fa_ghs", settings.destinations.ghs);
+        assertEquals("bt_aging_spec_168_hourly", settings.schedule.agingSpec.publicId);
         assertEquals(Long.valueOf(25000), settings.limits.amount.min.value);
         assertEquals(Long.valueOf(9999999), settings.limits.amount.max.value);
         assertEquals("168h", settings.schedule.agingSpec.tPlus);
