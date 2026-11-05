@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.inttegro.apps.*;
+import com.inttegro.childrenpolicies.*;
+import com.inttegro.operatingpolicies.*;
 import com.inttegro.balances.*;
 import com.inttegro.chimes.*;
 import com.inttegro.customers.*;
@@ -74,7 +76,7 @@ import java.util.UUID;
      * Thread safety: immutable after construction; share freely across goroutines/threads.
      */
 public class Client {
-    public static final String VERSION = "10.0.0";
+    public static final String VERSION = "10.1.0";
 
     private static final String DEFAULT_BASE_URL = "https://api.inttegro.com";
     private static final String USER_AGENT = "inttegro-sdk-java/" + VERSION;
@@ -109,6 +111,8 @@ public class Client {
     public final PricesClient prices;
     public final SpecClient spec;
     public final AppsClient apps;
+    public final ChildrenPoliciesClient childrenPolicies;
+    public final OperatingPoliciesClient operatingPolicies;
     public final KeysClient keys;
     public final BalancesClient balances;
     public final PurchaseIntentsClient purchaseIntents;
@@ -219,6 +223,8 @@ public class Client {
         this.prices = new PricesClient(this);
         this.spec = new SpecClient(this);
         this.apps = new AppsClient(this);
+        this.childrenPolicies = new ChildrenPoliciesClient(this);
+        this.operatingPolicies = new OperatingPoliciesClient(this);
         this.keys = new KeysClient(this);
         this.balances = new BalancesClient(this);
         this.purchaseIntents = new PurchaseIntentsClient(this);
@@ -326,6 +332,8 @@ public class Client {
 
     /** Access application creation, lookup, and update operations. */
     public AppsClient apps() { return apps; }
+    public ChildrenPoliciesClient childrenPolicies() { return childrenPolicies; }
+    public OperatingPoliciesClient operatingPolicies() { return operatingPolicies; }
     public KeysClient keys() { return keys; }
 
     String getBaseUrl() {
@@ -2236,6 +2244,55 @@ public class Client {
 
         public App update(UpdateAppParams params, RequestOptions options) throws IOException, InterruptedException, ApiException {
             return client.requestResourceWithOptions("/apps/update", params, options, "app", App.class);
+        }
+    }
+
+    public static class ChildrenPoliciesClient {
+        private final Client client;
+        public ChildrenPoliciesClient(Client client) { this.client = client; }
+
+        public ChildrenPolicy lookup() throws IOException, InterruptedException, ApiException {
+            return client.requestResource(
+                    "/children_policies/lookup",
+                    Map.of(),
+                    "children_policy",
+                    ChildrenPolicy.class
+            );
+        }
+    }
+
+    public static class OperatingPoliciesClient {
+        private final Client client;
+        public OperatingPoliciesClient(Client client) { this.client = client; }
+
+        public OperatingPolicy create(CreateOperatingPolicyParams params)
+                throws IOException, InterruptedException, ApiException {
+            return client.requestResource(
+                    "/operating_policies/create",
+                    params,
+                    "operating_policy",
+                    OperatingPolicy.class
+            );
+        }
+
+        public OperatingPolicy lookup(String operatingPolicyId)
+                throws IOException, InterruptedException, ApiException {
+            return client.requestResource(
+                    "/operating_policies/lookup",
+                    Map.of("operating_policy_id", operatingPolicyId),
+                    "operating_policy",
+                    OperatingPolicy.class
+            );
+        }
+
+        public OperatingPolicy update(UpdateOperatingPolicyParams params)
+                throws IOException, InterruptedException, ApiException {
+            return client.requestResource(
+                    "/operating_policies/update",
+                    params,
+                    "operating_policy",
+                    OperatingPolicy.class
+            );
         }
     }
 
