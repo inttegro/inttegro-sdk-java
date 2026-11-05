@@ -5,7 +5,6 @@ import java.time.OffsetDateTime;
 
 public record ChildrenPolicy(
         String id,
-        @JsonProperty("owner_application_id") String ownerApplicationId,
         long version,
         @JsonProperty("active_version") long activeVersion,
         String name,
