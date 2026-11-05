@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.inttegro.operatingpolicies.ApplicationOperatingPolicy;
 
 public class App {
     public String id;
@@ -15,4 +16,5 @@ public class App {
     @JsonProperty("archived_at") public OffsetDateTime archivedAt;
     public Map<String, Object> capabilities;
     public AppRelationship relationship;
+    @JsonProperty("operating_policy") public ApplicationOperatingPolicy operatingPolicy;
 }
