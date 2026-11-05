@@ -592,6 +592,22 @@ class ClientTest {
     }
 
     @Test
+    void policyAgingSpecsExposePublicId() throws Exception {
+        ObjectMapper mapper = mapper();
+        var children = mapper.readValue(
+                "{\"public_id\":\"bt_aging_spec_immediate\",\"t_plus\":\"0h\"}",
+                com.inttegro.childrenpolicies.ChildrenPolicyCapabilities.BTAgingSpec.class
+        );
+        var operating = mapper.readValue(
+                "{\"public_id\":\"bt_aging_spec_168_hourly\",\"t_plus\":\"168h\"}",
+                com.inttegro.operatingpolicies.OperatingPolicyCapabilities.BTAgingSpec.class
+        );
+
+        assertEquals("bt_aging_spec_immediate", children.publicId());
+        assertEquals("bt_aging_spec_168_hourly", operating.publicId());
+    }
+
+    @Test
     void refundsSupportCanonicalLifecycle() throws Exception {
         ObjectMapper mapper = mapper();
         AtomicReference<String> canonicalBody = new AtomicReference<>();

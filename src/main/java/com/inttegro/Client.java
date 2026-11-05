@@ -2251,12 +2251,40 @@ public class Client {
         private final Client client;
         public ChildrenPoliciesClient(Client client) { this.client = client; }
 
+        /** Retrieves the latest active children-policy version. */
         public ChildrenPolicy lookup() throws IOException, InterruptedException, ApiException {
+            return lookup(LookupChildrenPolicyParams.builder().build());
+        }
+
+        /** Retrieves an exact children-policy version. */
+        public ChildrenPolicy lookup(long version) throws IOException, InterruptedException, ApiException {
+            return lookup(LookupChildrenPolicyParams.builder().version(version).build());
+        }
+
+        public ChildrenPolicy lookup(LookupChildrenPolicyParams params)
+                throws IOException, InterruptedException, ApiException {
+            if (params == null) {
+                throw new IllegalArgumentException("params are required");
+            }
+            if (params.version != null && params.version < 1) {
+                throw new IllegalArgumentException("version must be at least 1");
+            }
             return client.requestResource(
                     "/children_policies/lookup",
-                    Map.of(),
+                    params,
                     "children_policy",
                     ChildrenPolicy.class
+            );
+        }
+
+        /** Lists immutable children-policy versions, newest first. */
+        public ChildrenPolicyPage page(PageChildrenPoliciesParams params)
+                throws IOException, InterruptedException, ApiException {
+            return client.requestResource(
+                    "/children_policies/page",
+                    params,
+                    "page",
+                    ChildrenPolicyPage.class
             );
         }
     }
@@ -2277,12 +2305,50 @@ public class Client {
 
         public OperatingPolicy lookup(String operatingPolicyId)
                 throws IOException, InterruptedException, ApiException {
+            return lookup(LookupOperatingPolicyParams.builder()
+                    .operatingPolicyId(operatingPolicyId)
+                    .build());
+        }
+
+        /** Retrieves an exact immutable version of an operating policy. */
+        public OperatingPolicy lookup(String operatingPolicyId, long version)
+                throws IOException, InterruptedException, ApiException {
+            return lookup(LookupOperatingPolicyParams.builder()
+                    .operatingPolicyId(operatingPolicyId)
+                    .version(version)
+                    .build());
+        }
+
+        public OperatingPolicy lookup(LookupOperatingPolicyParams params)
+                throws IOException, InterruptedException, ApiException {
+            validateOperatingPolicyId(params == null ? null : params.operatingPolicyId);
+            if (params.version != null && params.version < 1) {
+                throw new IllegalArgumentException("version must be at least 1");
+            }
             return client.requestResource(
                     "/operating_policies/lookup",
-                    Map.of("operating_policy_id", operatingPolicyId),
+                    params,
                     "operating_policy",
                     OperatingPolicy.class
             );
+        }
+
+        /** Lists immutable versions of one operating policy, newest first. */
+        public OperatingPolicyPage page(PageOperatingPoliciesParams params)
+                throws IOException, InterruptedException, ApiException {
+            validateOperatingPolicyId(params == null ? null : params.operatingPolicyId);
+            return client.requestResource(
+                    "/operating_policies/page",
+                    params,
+                    "page",
+                    OperatingPolicyPage.class
+            );
+        }
+
+        private static void validateOperatingPolicyId(String operatingPolicyId) {
+            if (operatingPolicyId == null || operatingPolicyId.isBlank()) {
+                throw new IllegalArgumentException("operatingPolicyId is required");
+            }
         }
 
         public OperatingPolicy update(UpdateOperatingPolicyParams params)
