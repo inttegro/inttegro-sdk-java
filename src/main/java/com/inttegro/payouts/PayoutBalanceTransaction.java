@@ -13,4 +13,7 @@ public class PayoutBalanceTransaction {
 
     /** Unique balance transaction identifier. */
     public String id;
+
+    /** Whether this contribution remains reserved, completed, or released. */
+    public PayoutBalanceTransactionStatus status;
 }

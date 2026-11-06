@@ -12,7 +12,7 @@ public record OperatingPolicyCapabilities(
 ) {
     public record AmountRange(long min, long max) {}
     public record Limits(AmountRange amount) {}
-    public record BTAgingSpec(@JsonProperty("public_id") String publicId, @JsonProperty("t_plus") String tPlus) {}
+    public record BTAgingSpec(String id, @JsonProperty("t_plus") String tPlus) {}
     public record Payments(List<String> currencies, Limits limits) {}
     public record Payouts(Boolean enabled, Limits limits, @JsonProperty("bt_aging_spec") BTAgingSpec btAgingSpec) {}
     public record PaymentMethod(boolean enabled, @JsonProperty("confirms_use") boolean confirmsUse) {}
