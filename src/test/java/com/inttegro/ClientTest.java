@@ -117,6 +117,21 @@ class ClientTest {
     }
 
     @Test
+    void requestMetadataSerializesTypedResponseProjection() throws Exception {
+        RequestMeta meta = RequestMeta.builder()
+                .response(RequestResponse.builder()
+                        .select("order", PropertySelection.pick("id", "status", "customer.name"))
+                        .select("payment", PropertySelection.omit("latest_error"))
+                        .build())
+                .build();
+
+        assertEquals(
+                "{\"response\":{\"projection\":{\"order\":{\"pick\":[\"id\",\"status\",\"customer.name\"]},\"payment\":{\"omit\":[\"latest_error\"]}}}}",
+                mapper().writeValueAsString(meta)
+        );
+    }
+
+    @Test
     void resourceSearchIsTypedAndAvailableOnEverySupportedResource() throws Exception {
         List<String> requestBodies = new ArrayList<>();
         String response = """
