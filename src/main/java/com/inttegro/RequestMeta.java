@@ -1,7 +1,9 @@
 package com.inttegro;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestMeta {
     @JsonProperty("idempotency_key")
     public String idempotencyKey;
