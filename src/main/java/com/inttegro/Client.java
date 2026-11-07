@@ -508,11 +508,6 @@ public class Client {
 
     private Map<String, Object> bodyWithIdempotency(String method, String path, Object body, String explicitIdempotencyKey) {
         Map<String, Object> payload = toRequestMap(body);
-        if (payload.containsKey("idempotency_key")) {
-            throw new IllegalArgumentException(
-                "top-level idempotency_key is not supported; use request_meta.idempotency_key or the Idempotency-Key header"
-            );
-        }
         if (!"POST".equalsIgnoreCase(method) || !isIdempotentMutationPath(path)) {
             return payload;
         }

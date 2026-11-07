@@ -737,7 +737,7 @@ class ClientTest {
     }
 
     @Test
-    void mutatingPostsRejectTopLevelIdempotencyKey() throws Exception {
+    void mutatingPostsGenerateRequestMetaIdempotencyKey() throws Exception {
         AtomicReference<String> requestBody = new AtomicReference<>();
         server.createContext("/orders/create", exchange -> {
             requestBody.set(new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
@@ -751,13 +751,10 @@ class ClientTest {
         server.start();
 
         Client client = new Client("sk_test_123", baseUrl, null);
-        IllegalArgumentException error = assertThrows(
-            IllegalArgumentException.class,
-            () -> client.request("POST", "/orders/create", Map.of("number", "ORDER-1", "idempotency_key", "legacy"), Map.class)
-        );
+        client.request("POST", "/orders/create", Map.of("number", "ORDER-1"), Map.class);
 
-        assertTrue(error.getMessage().contains("top-level idempotency_key is not supported"));
-        assertNull(requestBody.get());
+        assertTrue(requestBody.get().contains("\"request_meta\""));
+        assertTrue(UUID_V7_PATTERN.matcher(requestBody.get()).find());
     }
 
     @Test
