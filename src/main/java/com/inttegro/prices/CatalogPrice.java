@@ -12,7 +12,6 @@ public class CatalogPrice {
     public String about;
     public Boolean active;
     public PriceType type;
-    public Amount nominal;
     @JsonProperty("fixed_amount")
     public Amount fixedAmount;
     @JsonProperty("customer_selected_amount")

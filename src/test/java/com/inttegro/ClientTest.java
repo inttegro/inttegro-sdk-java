@@ -516,10 +516,11 @@ class ClientTest {
                 mapper.writeValueAsString(PriceParams.of(Currency.GHS, 3005))
         );
         var catalogPrice = mapper.readValue(
-                "{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"nominal\":{\"currency\":\"ghs\",\"value\":3005},\"fixed_amount\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
+                "{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"fixed_amount\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
                 com.inttegro.prices.CatalogPrice.class
         );
         assertEquals("prod_123", catalogPrice.productId);
+        assertEquals(3005L, catalogPrice.fixedAmount.value);
         assertEquals(OffsetDateTime.parse("2026-09-02T12:00:00Z"), catalogPrice.createdAt);
         UpdatePurchaseIntentParams updateIntent = new UpdatePurchaseIntentParams();
         updateIntent.expiresAt = OffsetDateTime.parse("2026-10-01T12:00:00Z");
@@ -807,7 +808,7 @@ class ClientTest {
     void productsCoverCurrentSpec() throws Exception {
         String productBody = "{\"product\":{\"id\":\"prod_123\",\"default_unit_price\":{\"id\":\"pr_123\",\"nominal\":{\"currency\":\"ghs\",\"value\":5000}}}}";
         server.createContext("/products/create", new JsonHandler(200, productBody));
-        server.createContext("/products/add_price", new JsonHandler(200, "{\"price\":{\"id\":\"pr_123\",\"nominal\":{\"currency\":\"ghs\",\"value\":5000}}}"));
+        server.createContext("/products/add_price", new JsonHandler(200, "{\"price\":{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"fixed_amount\":{\"currency\":\"ghs\",\"value\":5000},\"created_at\":\"2026-09-02T12:00:00Z\"}}"));
         server.createContext("/products/set_default_unit_price", new JsonHandler(200, productBody));
         server.createContext("/products/lookup", new JsonHandler(200, productBody));
         server.createContext("/products/update", new JsonHandler(200, productBody));

@@ -10,7 +10,6 @@ public class ProductPriceSummary {
     public boolean active;
     public String label;
     public PriceType type;
-    public Amount nominal;
     @JsonProperty("fixed_amount") public Amount fixedAmount;
     @JsonProperty("customer_selected_amount") public CustomerSelectedAmount customerSelectedAmount;
 }
