@@ -1,5 +1,6 @@
 package com.inttegro.chimes;
 
+import com.inttegro.RequestMeta;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class BroadcastChimeParams {
     public String sender;
     public String purpose;
     @JsonProperty("preferred_gateway") public String preferredGateway;
-    @JsonProperty("idempotency_key") public String idempotencyKey;
+    @JsonProperty("request_meta") public RequestMeta requestMeta;
 
     public static Builder builder() { return new Builder(); }
 
@@ -22,7 +23,7 @@ public class BroadcastChimeParams {
         public Builder sender(String sender) { params.sender = sender; return this; }
         public Builder purpose(String purpose) { params.purpose = purpose; return this; }
         public Builder preferredGateway(String preferredGateway) { params.preferredGateway = preferredGateway; return this; }
-        public Builder idempotencyKey(String idempotencyKey) { params.idempotencyKey = idempotencyKey; return this; }
+        public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public BroadcastChimeParams build() { return params; }
     }
 }

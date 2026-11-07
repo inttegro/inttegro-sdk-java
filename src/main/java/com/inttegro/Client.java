@@ -508,7 +508,6 @@ public class Client {
 
     private Map<String, Object> bodyWithIdempotency(String method, String path, Object body, String explicitIdempotencyKey) {
         Map<String, Object> payload = toRequestMap(body);
-        payload.remove("idempotency_key");
         if (!"POST".equalsIgnoreCase(method) || !isIdempotentMutationPath(path)) {
             return payload;
         }

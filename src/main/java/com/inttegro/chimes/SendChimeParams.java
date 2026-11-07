@@ -1,6 +1,7 @@
 package com.inttegro.chimes;
 
 import com.inttegro.CustomData;
+import com.inttegro.RequestMeta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -13,7 +14,7 @@ public class SendChimeParams {
     public String sender;
     public String purpose;
     @JsonProperty("custom_data") public CustomData customData;
-    @JsonProperty("idempotency_key") public String idempotencyKey;
+    @JsonProperty("request_meta") public RequestMeta requestMeta;
 
     public static Builder builder() { return new Builder(); }
 
@@ -25,7 +26,7 @@ public class SendChimeParams {
         public Builder sender(String sender) { params.sender = sender; return this; }
         public Builder purpose(String purpose) { params.purpose = purpose; return this; }
         public Builder customData(CustomData customData) { params.customData = customData; return this; }
-        public Builder idempotencyKey(String idempotencyKey) { params.idempotencyKey = idempotencyKey; return this; }
+        public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public SendChimeParams build() { return params; }
     }
 }

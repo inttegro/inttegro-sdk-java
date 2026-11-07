@@ -22,6 +22,7 @@ class SemanticCollectionsTest {
             "CustomerBalance.java",
             "ProductDimensionDetails.java",
             "PurchaseIntentVariant.java",
+            "ResponseProjection.java",
             "App.java"
     );
 

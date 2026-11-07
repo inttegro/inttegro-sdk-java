@@ -117,6 +117,21 @@ class ClientTest {
     }
 
     @Test
+    void requestMetadataSerializesTypedResponseProjection() throws Exception {
+        RequestMeta meta = RequestMeta.builder()
+                .response(RequestResponse.builder()
+                        .select("order", PropertySelection.pick("id", "status", "customer.name"))
+                        .select("payment", PropertySelection.omit("latest_error"))
+                        .build())
+                .build();
+
+        assertEquals(
+                "{\"response\":{\"projection\":{\"order\":{\"pick\":[\"id\",\"status\",\"customer.name\"]},\"payment\":{\"omit\":[\"latest_error\"]}}}}",
+                mapper().writeValueAsString(meta)
+        );
+    }
+
+    @Test
     void resourceSearchIsTypedAndAvailableOnEverySupportedResource() throws Exception {
         List<String> requestBodies = new ArrayList<>();
         String response = """
@@ -501,10 +516,11 @@ class ClientTest {
                 mapper.writeValueAsString(PriceParams.of(Currency.GHS, 3005))
         );
         var catalogPrice = mapper.readValue(
-                "{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"nominal\":{\"currency\":\"ghs\",\"value\":3005},\"fixed_amount\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
+                "{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"fixed_amount\":{\"currency\":\"ghs\",\"value\":3005},\"product_id\":\"prod_123\",\"created_at\":\"2026-09-02T12:00:00Z\"}",
                 com.inttegro.prices.CatalogPrice.class
         );
         assertEquals("prod_123", catalogPrice.productId);
+        assertEquals(3005L, catalogPrice.fixedAmount.value);
         assertEquals(OffsetDateTime.parse("2026-09-02T12:00:00Z"), catalogPrice.createdAt);
         UpdatePurchaseIntentParams updateIntent = new UpdatePurchaseIntentParams();
         updateIntent.expiresAt = OffsetDateTime.parse("2026-10-01T12:00:00Z");
@@ -751,9 +767,8 @@ class ClientTest {
         server.start();
 
         Client client = new Client("sk_test_123", baseUrl, null);
-        client.request("POST", "/orders/create", Map.of("number", "ORDER-1", "idempotency_key", "legacy"), Map.class);
+        client.request("POST", "/orders/create", Map.of("number", "ORDER-1"), Map.class);
 
-        assertFalse(requestBody.get().contains("\"idempotency_key\":\"legacy\""));
         assertTrue(requestBody.get().contains("\"request_meta\""));
         assertTrue(UUID_V7_PATTERN.matcher(requestBody.get()).find());
     }
@@ -793,7 +808,7 @@ class ClientTest {
     void productsCoverCurrentSpec() throws Exception {
         String productBody = "{\"product\":{\"id\":\"prod_123\",\"default_unit_price\":{\"id\":\"pr_123\",\"nominal\":{\"currency\":\"ghs\",\"value\":5000}}}}";
         server.createContext("/products/create", new JsonHandler(200, productBody));
-        server.createContext("/products/add_price", new JsonHandler(200, "{\"price\":{\"id\":\"pr_123\",\"nominal\":{\"currency\":\"ghs\",\"value\":5000}}}"));
+        server.createContext("/products/add_price", new JsonHandler(200, "{\"price\":{\"id\":\"pr_123\",\"active\":true,\"type\":\"fixed_amount\",\"fixed_amount\":{\"currency\":\"ghs\",\"value\":5000},\"created_at\":\"2026-09-02T12:00:00Z\"}}"));
         server.createContext("/products/set_default_unit_price", new JsonHandler(200, productBody));
         server.createContext("/products/lookup", new JsonHandler(200, productBody));
         server.createContext("/products/update", new JsonHandler(200, productBody));
