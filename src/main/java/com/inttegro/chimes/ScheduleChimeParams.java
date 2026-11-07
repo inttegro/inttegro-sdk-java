@@ -1,5 +1,6 @@
 package com.inttegro.chimes;
 
+import com.inttegro.RequestMeta;
 import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -11,7 +12,7 @@ public class ScheduleChimeParams {
     @JsonProperty("send_after") public OffsetDateTime sendAfter;
     @JsonProperty("sender_id") public String senderId;
     public String purpose;
-    @JsonProperty("idempotency_key") public String idempotencyKey;
+    @JsonProperty("request_meta") public RequestMeta requestMeta;
 
     public static Builder builder() { return new Builder(); }
 
@@ -22,7 +23,7 @@ public class ScheduleChimeParams {
         public Builder sendAfter(OffsetDateTime sendAfter) { params.sendAfter = sendAfter; return this; }
         public Builder senderId(String senderId) { params.senderId = senderId; return this; }
         public Builder purpose(String purpose) { params.purpose = purpose; return this; }
-        public Builder idempotencyKey(String idempotencyKey) { params.idempotencyKey = idempotencyKey; return this; }
+        public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public ScheduleChimeParams build() { return params; }
     }
 }
