@@ -16,5 +16,4 @@ import java.util.function.Consumer;
 public class OrderDocumentDeliveryAttempt {
     public DeliveryChannel channel;
     @JsonProperty("chime_id") public String chimeId;
-    public String error;
 }
