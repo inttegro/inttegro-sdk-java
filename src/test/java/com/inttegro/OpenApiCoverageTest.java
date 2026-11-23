@@ -61,11 +61,11 @@ class OpenApiCoverageTest {
                 break;
             }
 
-            String trimmed = line.stripLeading();
-            if (!trimmed.startsWith("/")) {
+            if (!line.startsWith("    /") || line.startsWith("     /")) {
                 continue;
             }
 
+            String trimmed = line.stripLeading();
             int colon = trimmed.indexOf(':');
             if (colon > 0) {
                 paths.add(trimmed.substring(0, colon).replace("\"", "").replace("'", ""));
