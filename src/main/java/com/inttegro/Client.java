@@ -76,7 +76,7 @@ import java.util.UUID;
      * Thread safety: immutable after construction; share freely across goroutines/threads.
      */
 public class Client {
-    public static final String VERSION = "11.0.0";
+    public static final String VERSION = "12.0.0";
 
     private static final String DEFAULT_BASE_URL = "https://api.inttegro.com";
     private static final String USER_AGENT = "inttegro-sdk-java/" + VERSION;
@@ -1418,6 +1418,10 @@ public class Client {
 
         public ChimePage page(PageChimesParams params) throws IOException, InterruptedException, ApiException {
             return client.requestResource("/chimes/page", params, "page", ChimePage.class);
+        }
+
+        public ChimeSettings settings() throws IOException, InterruptedException, ApiException {
+            return client.requestResource("/chimes/settings", Map.of(), "settings", ChimeSettings.class);
         }
     }
 
