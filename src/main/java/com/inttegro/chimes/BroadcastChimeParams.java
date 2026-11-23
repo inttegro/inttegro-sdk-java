@@ -10,7 +10,6 @@ public class BroadcastChimeParams {
     @JsonProperty("service_name") public String serviceName;
     public String sender;
     public String purpose;
-    @JsonProperty("preferred_gateway") public String preferredGateway;
     @JsonProperty("request_meta") public RequestMeta requestMeta;
 
     public static Builder builder() { return new Builder(); }
@@ -22,7 +21,6 @@ public class BroadcastChimeParams {
         public Builder serviceName(String serviceName) { params.serviceName = serviceName; return this; }
         public Builder sender(String sender) { params.sender = sender; return this; }
         public Builder purpose(String purpose) { params.purpose = purpose; return this; }
-        public Builder preferredGateway(String preferredGateway) { params.preferredGateway = preferredGateway; return this; }
         public Builder requestMeta(RequestMeta requestMeta) { params.requestMeta = requestMeta; return this; }
         public BroadcastChimeParams build() { return params; }
     }

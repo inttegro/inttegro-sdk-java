@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 12.0.0 - 2026-11-23
+
+- Breaking: removed provider-specific Chime delivery-event fields and the
+  internal email-event ingestion model from the public SDK.
+- Breaking: removed private document-delivery failure details.
+- Replaced the application capability map with a typed projection.
+- Added typed lookup of effective, non-secret Chime delivery settings.
+
 ## 11.1.0 - 2026-11-07
 
 - Added typed response-projection metadata with resource-level `pick` and
